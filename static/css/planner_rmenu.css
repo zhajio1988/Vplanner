@@ -1,0 +1,28 @@
+/* 右键菜单 - start */
+    .dropdown-menu .dropdown-menu {
+        position: absolute;
+        top: -9px;
+        left: 100%;
+    }
+
+    .dropdown-menu li {
+        position: relative;
+    }
+
+    .dropdown-menu li.hasChildren:before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        right: 8px;
+        width: 0;
+        height: 0;
+        margin-top: -5px;
+        border-style: solid;
+        border-color: transparent transparent transparent rgba(0, 0, 0, 0.5);
+        border-width: 5px 0 5px 5px;
+        pointer-events: none;
+    }
+
+    .dropdown-menu li.hasChildren:hover > .dropdown-menu {
+        display: block;
+    }

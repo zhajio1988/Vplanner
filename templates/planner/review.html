@@ -1,0 +1,425 @@
+{% extends 'planner/base.html' %}
+{% load staticfiles %}
+{% load static %}
+{% block title %}Review{% endblock %}
+
+{% block extra_head %}
+	<link href={% static "zTree/css/metroStyle/metroStyle.css" %} type="text/css" rel="stylesheet">
+    <script src={% static "zTree/js/jquery.ztree.core.js" %} type="text/javascript"></script>    
+    <script src={% static "zTree/js/jquery.ztree.excheck.js" %} type="text/javascript"></script>    
+    <script src={% static "zTree/js/jquery.ztree.exedit.js" %} type="text/javascript"></script>    
+	<script type="text/javascript">
+        var zTree, rMenu;
+		var setting = {
+			view: {
+				addHoverDom: addHoverDom,
+				removeHoverDom: removeHoverDom,
+                dblClickExpand: false,
+				selectedMulti: false
+			},
+			edit: {
+				enable: true,
+				editNameSelectAll: true,
+				showRemoveBtn: showRemoveBtn,
+				showRenameBtn: true
+			},
+			data: {
+				simpleData: {
+					enable: true
+				}
+			},
+			callback: {
+				beforeDrag: beforeDrag,
+				beforeEditName: beforeEditName,
+				beforeRemove: beforeRemove,
+				beforeRename: beforeRename,
+                onRightClick: OnRightClick,    
+				onDblClick: onDblClick
+			}
+		};
+
+        function onDblClick(event, treeId, treeNode) {
+            //alert(treeNode.tId + ", " + treeNode.name);  
+            $('#ztree_node_content').empty();
+            var rootNode = getRoot()
+            $.get('/planner/tree_node_content/', {project_name : rootNode.name, feature_id : treeNode.id}, function(data, status){
+                if(status == 'success'){
+                    //alert(data)
+                    $('#ztree_node_content').html(data);
+                }
+                else{
+                    alert("ajax get data fail!")
+                }
+	        });
+        };
+
+        function getRoot() {
+            var node = zTree.getNodesByFilter(function (node) { return node.level == 0 }, true);
+            return node
+        }
+  
+		var className = "dark";
+
+		function beforeDrag(treeId, treeNodes) {
+            for (var i=0; i<treeNodes.length; i++) {  
+                   dragId = treeNodes[i].pId;
+                   p_tId = treeNodes[i].getParentNode().tId;  
+            }  
+            return true;
+		}
+
+		function beforeEditName(treeId, treeNode) {
+			className = (className === "dark" ? "":"dark");
+			zTree.selectNode(treeNode);
+			setTimeout(function() {
+				if (confirm("Start node '" + treeNode.name + "' editorial status?")) {
+					setTimeout(function() {
+						zTree.editName(treeNode);
+					}, 0);
+				}
+			}, 0);
+			return false;
+		}
+		function beforeRemove(treeId, treeNode) {
+			className = (className === "dark" ? "":"dark");
+			zTree.selectNode(treeNode);
+			return confirm("Confirm delete node '" + treeNode.name + "' it?");
+		}
+
+		function beforeRename(treeId, treeNode, newName, isCancel) {
+			className = (className === "dark" ? "":"dark");
+			if (newName.length == 0) {
+				setTimeout(function() {
+					zTree.cancelEditName();
+					alert("Node name can not be empty.");
+				}, 0);
+				return false;
+			}
+			return true;
+		}
+
+		function showRemoveBtn(treeId, treeNode) {
+			return !treeNode.isFirstNode;
+		}
+		function showRenameBtn(treeId, treeNode) {
+			return !treeNode.isLastNode;
+		}
+
+		function getTime() {
+			var now= new Date(),
+			h=now.getHours(),
+			m=now.getMinutes(),
+			s=now.getSeconds(),
+			ms=now.getMilliseconds();
+			return (h+":"+m+":"+s+ " " +ms);
+		}
+
+		var newCount = 1;
+		function addHoverDom(treeId, treeNode) {
+			var sObj = $("#" + treeNode.tId + "_span");
+			if (treeNode.editNameFlag || $("#addBtn_"+treeNode.tId).length>0) return;
+			var addStr = "<span class='button add' id='addBtn_" + treeNode.tId
+				+ "' title='add node' onfocus='this.blur();'></span>";
+			sObj.after(addStr);
+			var btn = $("#addBtn_"+treeNode.tId);
+			if (btn) btn.bind("click", function(){
+				zTree.addNodes(treeNode, {id:(100 + newCount), pId:treeNode.id, name:"new node" + (newCount++)});
+				return false;
+			});
+		};
+		function removeHoverDom(treeId, treeNode) {
+			$("#addBtn_"+treeNode.tId).unbind().remove();
+		};
+		function selectAll() {
+			zTree.setting.edit.editNameSelectAll =  $("#selectAll").attr("checked");
+		}
+		
+// work ok from zTree demo
+		function OnRightClick(event, treeId, treeNode) {
+			if (!treeNode && event.target.tagName.toLowerCase() != "button" && $(event.target).parents("a").length == 0) {
+				zTree.cancelSelectedNode();
+				showRMenu("root", event.clientX, event.clientY);
+			} else if (treeNode && !treeNode.noR) {
+				zTree.selectNode(treeNode);
+				showRMenu("node", event.clientX, event.clientX);
+			}
+		}
+
+		function showRMenu(type, x, y) {
+			$("#rMenu ul").show();
+			if (type=="root") {
+				$("#m_del").hide();
+				$("#m_check").hide();
+				$("#m_unCheck").hide();
+			} else {
+				$("#m_del").show();
+				$("#m_check").show();
+				$("#m_unCheck").show();
+			}
+            y += document.body.scrollTop;
+            x += document.body.scrollLeft;
+            rMenu.css({"top":y+"px", "left":x+"px", "visibility":"visible"});
+
+			$("body").bind("mousedown", onBodyMouseDown);
+		}
+		function hideRMenu() {
+			if (rMenu) rMenu.css({"visibility": "hidden"});
+			$("body").unbind("mousedown", onBodyMouseDown);
+		}
+		function onBodyMouseDown(event){
+			if (!(event.target.id == "rMenu" || $(event.target).parents("#rMenu").length>0)) {
+				rMenu.css({"visibility" : "hidden"});
+			}
+		}
+		var addCount = 1;
+		function addTreeNode() {
+			hideRMenu();
+			var newNode = { name:"newNode " + (addCount++)};
+			if (zTree.getSelectedNodes()[0]) {
+				newNode.checked = zTree.getSelectedNodes()[0].checked;
+				zTree.addNodes(zTree.getSelectedNodes()[0], newNode);
+			} else {
+				zTree.addNodes(null, newNode);
+			}
+		}
+		function removeTreeNode() {
+			hideRMenu();
+			var nodes = zTree.getSelectedNodes();
+			if (nodes && nodes.length>0) {
+				if (nodes[0].children && nodes[0].children.length > 0) {
+					var msg = "If you delete this node will be deleted along with sub-nodes. \n\nPlease confirm!";
+					if (confirm(msg)==true){
+						zTree.removeNode(nodes[0]);
+					}
+				} else {
+					zTree.removeNode(nodes[0]);
+				}
+			}
+		}
+		function checkTreeNode(checked) {
+			var nodes = zTree.getSelectedNodes();
+			if (nodes && nodes.length>0) {
+				zTree.checkNode(nodes[0], checked, true);
+			}
+			hideRMenu();
+		}
+		function resetTree() {
+			hideRMenu();
+			$.fn.zTree.init($("#treeDemo"), setting, zNodes);
+		}
+// work ok from zTree demo
+
+var zNodes = [
+  {
+    "id": 21,
+    "name": "ddrproj",
+    "pID": 0,
+    "open": true
+  },
+  {
+    "open": true,
+    "name": "feature1",
+    "id": 170,
+    "pId": 21
+  },
+  {
+    "id": 171,
+    "name": "sub1 clk and rst",
+    "pId": 170
+  },
+  {
+    "id": 172,
+    "name": "sub1 rst",
+    "pId": 170
+  },
+  {
+    "id": 173,
+    "name": "sub1 clk",
+    "pId": 170
+  },
+  {
+    "open": true,
+    "name": "feature2",
+    "id": 174,
+    "pId": 21
+  },
+  {
+    "id": 175,
+    "name": "sub2 clk and rst",
+    "pId": 174
+  },
+  {
+    "id": 176,
+    "name": "sub2 rst",
+    "pId": 174
+  },
+  {
+    "id": 177,
+    "name": "sub2 clk",
+    "pId": 174
+  },
+  {
+    "open": true,
+    "name": "feature3",
+    "id": 178,
+    "pId": 21
+  },
+  {
+    "id": 179,
+    "name": "sub3 clk and rst",
+    "pId": 178
+  },
+  {
+    "id": 180,
+    "name": "sub3 rst",
+    "pId": 178
+  },
+  {
+    "id": 181,
+    "name": "sub3 clk",
+    "pId": 178
+  }
+]
+
+        $(document).ready(function(){  
+            $.fn.zTree.init($("#treeDemo"), setting, zNodes);  
+		    $("#selectAll").bind("click", selectAll);                
+		    zTree = $.fn.zTree.getZTreeObj("treeDemo");                
+		    rMenu = $("#rMenu");
+            $("#btn1").click(function(){
+            $("#sidebar").hide("slow");
+            });
+            $("#btn2").click(function(){
+            $("#sidebar").show("show");
+            });            
+        });
+	</script>    
+	<style type="text/css">
+        .ztree li span.button.add {margin-left:2px; margin-right: -1px; background-position:-144px 0; vertical-align:top; *vertical-align:middle}
+        div#rMenu {position:absolute; visibility:hidden; top:0; text-align: left; padding: 2px;}
+        div#rMenu ul li{
+	    margin: 1px 0;
+	    cursor: pointer;
+	    list-style: none outside none;
+        padding: 3px 15px 3px 15px;
+	    background-color: #DFDFDF;
+        vertical-align:middle;
+        }
+        .container-fluid-cstm {
+            margin-right: auto;
+            margin-left: auto;
+        }        
+        .col-md-2-cstm {
+            width: 16.66666667%;
+            float: left;
+            position: relative;
+            min-height: 1px;
+            padding-right: 1px;
+            padding-left: 1px;        
+        }
+        .col-md-10-cstm{
+            width: 83.33333333%;
+            float: left;
+            position: relative;
+            min-height: 1px;
+            padding-right: 1px;
+            padding-left: 1px;
+        }
+	</style>
+{% endblock %}
+
+{% block body_block %}
+    {% if user.is_authenticated %}
+        <h2 class="form-signin-heading">Review of <a href="{% url 'project'  project.slug %}"> {{ project.name }}</a></h2>
+        {% if project %}
+            {% csrf_token %}
+            <li><a href={% static "json/project.json" %}>Review Json</a></li>
+        {% else %}
+        <strong>A project by this name "{{project}}" does not exist.</strong>
+        {% endif %}
+    {% else %}
+    <strong> User is not registered!</strong>
+    {% endif %}
+
+    <div class="container-fluid-cstm">
+        <div class="row-fluid">
+            <div class="col-md-2-cstm">
+                <button class="btn btn-primary" id="btn1">Hide</button>
+                <button class="btn btn-primary" id="btn2">Show</button>
+                <div class="content_wrap">
+                    <ul id="treeDemo" class="ztree"></ul>
+                </div>
+            </div>
+            <div class="col-md-10-cstm">
+                <div id="ztree_node_content">
+                </div>
+                {% block ztree_node_content %} {% endblock %}
+                {% block feature_panel %} {% endblock %}
+            </div> 
+        </div>
+    </div>
+
+    <div id="rMenu">
+    	<ul>
+    		<li id="m_add" onclick="addTreeNode();">Add Node</li>
+    		<li id="m_del" onclick="removeTreeNode();">Delete Node</li>
+    		<li id="m_check" onclick="checkTreeNode(true);">Check Node</li>
+    		<li id="m_unCheck" onclick="checkTreeNode(false);">Uncheck Node</li>
+    		<li id="m_reset" onclick="resetTree();">Resume zTree</li>
+    	</ul>
+    </div>
+
+    <!--
+    <form class="form-horizontal" role="form">
+         <fieldset>
+             <legend>配置数据源</legend>
+            <div class="form-group">
+               <label class="col-sm-2 control-label" for="ds_host">主机名</label>
+               <div class="col-sm-4">
+                  <input class="form-control" id="ds_host" type="text" placeholder="192.168.1.161"/>
+               </div>
+               <label class="col-sm-2 control-label" for="ds_name">数据库名</label>
+               <div class="col-sm-4">
+                  <input class="form-control" id="ds_name" type="text" placeholder="msh"/>
+               </div>
+            </div>
+            <div class="form-group">
+               <label class="col-sm-2 control-label" for="ds_username">用户名</label>
+               <div class="col-sm-4">
+                  <input class="form-control" id="ds_username" type="text" placeholder="root"/>
+               </div>
+               <label class="col-sm-2 control-label" for="ds_password">密码</label>
+               <div class="col-sm-4">
+                  <input class="form-control" id="ds_password" type="password" placeholder="123456"/>
+               </div>
+            </div>
+         </fieldset>     
+         <fieldset>
+              <legend>选择相关表</legend>
+             <div class="form-group">
+                <label for="disabledSelect"  class="col-sm-2 control-label">表名</label>
+                <div class="col-sm-10">
+                   <select id="disabledSelect" class="form-control">
+                      <option>禁止选择</option>
+                      <option>禁止选择</option>
+                   </select>
+                </div>
+             </div>
+         </fieldset>
+         
+            <fieldset>
+              <legend>字段名</legend>
+             <div class="form-group">
+                <label for="disabledSelect"  class="col-sm-2 control-label">表名</label>
+                <div class="col-sm-10">
+                   <select id="disabledSelect" class="form-control">
+                      <option>禁止选择</option>
+                      <option>禁止选择</option>
+                   </select>
+                </div>
+             </div>
+         </fieldset>
+    </form>    
+    -->
+
+{% endblock %}

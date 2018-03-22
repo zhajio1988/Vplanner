@@ -1,0 +1,12 @@
+{% if cats %}
+    <ul class="nav nav-pills nav-stacked">
+    {% for c in cats %}
+        {% if c == act_cat %} 
+            <li  class="active" >
+        {% else  %} 
+            <li>
+        {% endif %}
+        <a href="{% url 'project'  c.slug %}">{{ c.name }}</a></li>    
+    {% endfor %}
+    </ul>
+{% endif %}

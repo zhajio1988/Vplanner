@@ -1,0 +1,49 @@
+{% extends 'planner/base.html' %}
+{% load staticfiles %}
+{% load static %}
+
+{% block title %}{% endblock %}
+
+{% block extra_head %}
+    <link href={% static "bootstrap/docs/4.0/examples/signin/signin.css" %} rel="stylesheet">
+{% endblock %}
+
+{% block body_block %}
+        {% if registered %}
+            Vplanner says: <strong>thank you for registering!</strong>
+            <a href="/planner/">Return to the homepage.</a><br />
+        {% else %}
+        <form class="form-signin" role="form" method="post" action="/planner/register/"
+                enctype="multipart/form-data">
+            {% csrf_token %}
+            <h2 class="form-signin-heading">Please Register</h2>
+            <!-- Display each form. The as_p method wraps each element in a paragraph
+                 (<p>) element. This ensures each element appears on a new line,
+                 making everything look neater. -->
+            <p class="required"> <label for="id_username">Username:</label>
+            <input class="form-control" placeholder="Username" id="id_username" maxlength="30" name="username" type="text" required autofocus=""/></p>
+
+            <p class="required"><label for="id_email">E-mail:</label>
+            <input type="email" class="form-control" placeholder="Enter email" id="email" name="email"  required /></p>
+
+            <p class="required"><label for="id_password">Password:</label>
+            <input type="password" class="form-control" placeholder="Password" id="id_password" name="password"  required /></p>
+
+            <p class="required"><label for="id_website">Website:</label>
+            <input type="url" class="form-control" placeholder="Website" id="id_website" name="website"  required /></p>
+
+            <p class="required"><label for="id_picture">Picture:</label>
+            <input type="file" class="form-control" placeholder="Picture" id="id_picture" name="picture"  required /></p>
+
+            <!--
+            {{ user_form.as_p }}
+            {{ profile_form.as_p }}
+            -->
+
+            <!-- Provide a button to click to submit the form. -->
+            <!-- <button type="submit" class="btn btn-default">Submit</button> -->
+            <!-- <input class="btn btn-primary" type="submit" name="submit" value="Submit" /> -->
+            <button class="btn btn-lg btn-primary btn-block" type="submit" value="Submit" >Register</button>
+        </form>
+        {% endif %}
+{% endblock %}

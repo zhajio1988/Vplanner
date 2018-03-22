@@ -1,0 +1,17 @@
+{% extends 'planner/base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}About{% endblock %}
+
+{% block body_block %}
+    <div class="page-header">
+        <h1>About Vplanner</h1>
+    </div>
+    <div>
+        <p class="text-info"></strong>It is the first WebApp Jude made, I hope you like it!</p>
+        <p class="text-info"></strong>If you have any questions, please contact me via jiong.zhang@hxt-semitech.com</p>
+        <p class="text-info"></strong>My heart will go on!</p>
+        <img width="400" height="400" src="{% static "images/planner.png" %}" alt="Picture of Vplanner" />
+    </div>
+{% endblock %}

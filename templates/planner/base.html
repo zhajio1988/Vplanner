@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+{% load static %}
+{% load i18n %}
+{% load planner_extras %} 
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Verification planner">
+    <meta name="author" content="Jude.zhang">
+    <link rel="icon" href={% static "bitbug_favicon_5.ico" %}>
+
+    <title>Vplanner - {% block title %}How to Tango with Django!{% endblock %}</title>
+
+    <!-- Bootstrap core CSS -->
+    {% block exclude_bootstrap_css %} 
+    <link href={% static "bootstrap/css/bootstrap.min.css" %} rel="stylesheet">
+    {% endblock %}
+    <link href={% static "bootstrap/docs/4.0/examples/dashboard/dashboard.css" %} rel="stylesheet">
+    <link href={% static "bootstrap/docs/4.0/examples/sticky-footer/sticky-footer.css" %} rel="stylesheet">
+    <!-- <link href={% static "jstree/dist/themes/default/style.min.css" %} rel="stylesheet"/> -->
+    <!--  <link href={% static "css/planner_form.css" %} rel="stylesheet"/> -->
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src={% static "jquery/jquery.min.js" %}></script>
+    <script src={% static "bootstrap/js/bootstrap.min.js" %}></script>
+    <script src={% static "bootstrap/assets/js/docs.min.js" %}></script>
+    <!-- include the minified jstree source 
+    <script src={% static "jstree/dist/jstree.min.js" %}></script> -->     
+    <script src="{% static "js/planner-ajax.js" %}"></script>
+
+    {% block extra_head %} {% endblock %}
+	<style type="text/css">
+        footer#dhts {
+          position: absolute;
+          bottom: 0;
+          width: 100%;
+          margin-top: 20px;
+          background-color:#f5f5f5;
+        }
+        footer#dhts p,
+        footer#dhts span,
+        footer#dhts a {
+          font-weight: 300;
+          font-family: 'Lato';
+          font-size: 12px;
+          color: #000000;
+        }
+        footer#dhts i {
+          margin-right: 5px;
+          color: #000000;
+        }
+        footer#dhts span,
+        footer#dhts a {
+          margin: 0 20px 0 0;
+        }
+        .text_left{float:left;}        
+        .text_right{float:right;}        
+	</style>
+  </head>
+
+  <body>
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/planner/">Vplanner</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <!--
+                <li><a href="{% url 'index' %}"><i class="icon-white icon-home"></i> Home</a></li>
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'restricted' %}">Restricted Page</a></li>
+                        <li><a href="{% url 'add_project' %}">Add a New Project</a></li>
+                        {% trans "Logged in" %}: {{ user.username }} 
+                        (<a href="{% url 'auth_logout' %}">{% trans "Log out" %}</a> | 
+                        <a href="{% url 'auth_password_change' %}">{% trans "Change password" %}</a>)                         
+                    {% else %}
+                        <li><a href="{% url 'registration_register' %}">Register</a></li>
+                        <li><a href="{% url 'auth_login' %}">Login</a></li>
+                    {% endif %}
+                    <li><a href="{% url 'about' %}">About</a></li>
+                -->
+            {% if user.is_authenticated %}
+                <!-- <li><a href="{% url 'restricted' %}">Restricted Page</a></li>-->
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+                <li><a href="{% url 'add_project' %}">Create a New Project</a></li>
+                <li><a href="{% url 'profile' %}"><i class="icon-user"></i> Profile</a></li>
+            {% else %}
+                <li><a href="{% url 'register' %}">Register</a></li>
+                <li><a href="{% url 'login' %}">Login</a></li>
+            {% endif %}
+
+                <li><a href="{% url 'about' %}">About</a></li>                
+            </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <ul class="nav nav-list">
+			    <li class="nav-header">Find a Project</li>
+			    <form>
+			    <label></label>
+			    <li><input  class="search-query span10" type="text" name="suggestion" value="" id="suggestion" /></li>
+			    </form>
+		    </ul>
+		    <div id="cats"> </div>
+            <hr/>
+            {% block side_block %}
+            <ul class="nav nav-list">
+			    <li class="nav-header">Project List</li>
+            </ul>
+            {% get_category_list project %}
+            {% endblock %}
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            {% block body_block %}{% endblock %}
+        </div>
+      </div>
+    </div>
+
+    <!--
+    <div class="container-fluid">
+    	<div class="row-fluid">
+    		<div class="span2">
+                {% block inner_left_block %}{% endblock %}
+    		</div>
+    		<div class="span10">
+                {% block inner_right_block %}{% endblock %}
+    		</div>
+    	</div>
+    </div>
+    -->
+
+    <footer id="dhts">
+      <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="text_left">
+                <p class="text-left"><span>Powered by Jude.Zhang</span> 
+                {% if visits %} 
+                    <a href= "{% url 'about' %}" target="_top">Visits: {{ visits }}</a> 
+                {% endif %}
+                </p>
+            </div>
+            <div class="text_right">
+                <p class="text-right">
+                <!-- <i class="fa-copyright"><span >2017 Copyright</span></i> --> 
+                <i class="glyphicon glyphicon-copyright-mark"><span>2017</span></i>
+                HXT-semitech
+                <i class="glyphicon glyphicon-registration-mark"></i>
+                <span>All rights reserved.</span>
+                </p>
+            </div>
+        </div>
+      </div>
+    </footer>
+
+  </body>
+</html>

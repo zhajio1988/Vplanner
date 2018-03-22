@@ -1,0 +1,134 @@
+[
+{
+    "model": "planner.feature",
+    "pk": 170,
+    "fields": {
+        "parent_feature": null,
+        "project": 21,
+        "name": "ddrproj.feature1",
+        "views": 1,
+        "pid": 21
+    }
+},
+{
+    "model": "planner.feature",
+    "pk": 171,
+    "fields": {
+        "parent_feature": 170,
+        "project": 21,
+        "name": "ddrproj.feature1.sub1 clk and rst",
+        "views": 2,
+        "pid": 170
+    }
+},
+{
+    "model": "planner.feature",
+    "pk": 172,
+    "fields": {
+        "parent_feature": 170,
+        "project": 21,
+        "name": "ddrproj.feature1.sub1 rst",
+        "views": 1,
+        "pid": 170
+    }
+},
+{
+    "model": "planner.feature",
+    "pk": 173,
+    "fields": {
+        "parent_feature": 170,
+        "project": 21,
+        "name": "ddrproj.feature1.sub1 clk",
+        "views": 0,
+        "pid": 170
+    }
+},
+{
+    "model": "planner.feature",
+    "pk": 174,
+    "fields": {
+        "parent_feature": null,
+        "project": 21,
+        "name": "ddrproj.feature2",
+        "views": 1,
+        "pid": 21
+    }
+},
+{
+    "model": "planner.feature",
+    "pk": 175,
+    "fields": {
+        "parent_feature": 174,
+        "project": 21,
+        "name": "ddrproj.feature2.sub2 clk and rst",
+        "views": 0,
+        "pid": 174
+    }
+},
+{
+    "model": "planner.feature",
+    "pk": 176,
+    "fields": {
+        "parent_feature": 174,
+        "project": 21,
+        "name": "ddrproj.feature2.sub2 rst",
+        "views": 0,
+        "pid": 174
+    }
+},
+{
+    "model": "planner.feature",
+    "pk": 177,
+    "fields": {
+        "parent_feature": 174,
+        "project": 21,
+        "name": "ddrproj.feature2.sub2 clk",
+        "views": 0,
+        "pid": 174
+    }
+},
+{
+    "model": "planner.feature",
+    "pk": 178,
+    "fields": {
+        "parent_feature": null,
+        "project": 21,
+        "name": "ddrproj.feature3",
+        "views": 0,
+        "pid": 21
+    }
+},
+{
+    "model": "planner.feature",
+    "pk": 179,
+    "fields": {
+        "parent_feature": 178,
+        "project": 21,
+        "name": "ddrproj.feature3.sub3 clk and rst",
+        "views": 1,
+        "pid": 178
+    }
+},
+{
+    "model": "planner.feature",
+    "pk": 180,
+    "fields": {
+        "parent_feature": 178,
+        "project": 21,
+        "name": "ddrproj.feature3.sub3 rst",
+        "views": 1,
+        "pid": 178
+    }
+},
+{
+    "model": "planner.feature",
+    "pk": 181,
+    "fields": {
+        "parent_feature": 178,
+        "project": 21,
+        "name": "ddrproj.feature3.sub3 clk",
+        "views": 1,
+        "pid": 178
+    }
+}
+]

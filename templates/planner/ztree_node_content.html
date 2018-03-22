@@ -1,0 +1,67 @@
+{% load staticfiles %}
+{% load static %}
+{% load planner_extras %}
+
+<link href={% static "admin/css/base.css" %} rel="stylesheet">
+<link href={% static "admin/css/forms.css" %} rel="stylesheet">
+<style type="text/css">
+    .submit-row p.deletelink-p-jude {
+        float: left;
+        margin: 0; 
+    }
+    
+    .submit-row a.deletelink-jude {
+        display: block;
+        background: #ba2121;
+        border-radius: 4px;
+        padding: 10px 15px;
+        height: 15px;
+        line-height: 15px;
+        color: #fff;
+    }
+    
+    .submit-row a.deletelink:focus,
+    .submit-row a.deletelink:hover,
+    .submit-row a.deletelink:active {
+        background: #a41515;
+    }
+</style>
+
+{% if user.is_authenticated %}
+<h2>{{ feature.name }} detail</h2>
+<ul class="object-tools">
+    <li>
+        <a href="/admin/planner/featuredetail/133/history/" class="historylink">History</a>
+    </li>
+</ul>
+<form id="feature_form" method="post" action="{% url 'feature' project.name feature.pk %}">
+    {% if project %}
+        {% csrf_token %}
+        {% for hidden in form.hidden_fields %}
+            {{ hidden }}
+        {% endfor %}
+        <div>
+            <fieldset class="module aligned">
+                {% for field in form.visible_fields %}
+                <div class="form-row field-{{ field.name }}">
+                    <div>
+                        {{ field.errors }}
+                        {{ field.label_tag}}
+                        {{ field }}                    
+                    </div>
+                </div>
+                {% endfor %}
+            </fieldset>
+            {% submit_row %}
+        </div>
+    {% else %}
+    <strong>A project by this name "{{project}}" does not exist.</strong>
+    {% endif %}
+</form>
+<script type="text/javascript"
+        id="django-admin-form-add-constants"
+        src={% static 'admin/js/change_form.js' %}
+</script>    
+{% else %}
+<strong> User is not registered!</strong>
+{% endif %}

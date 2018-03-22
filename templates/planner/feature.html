@@ -1,0 +1,91 @@
+{% extends 'planner/base.html' %}
+
+{% load staticfiles %}
+{% load static %}
+{% load planner_extras %}
+
+{% block title %} {{ feature.name }} {% endblock %}
+
+{% block extra_head %}
+    <link href={% static "admin/css/base.css" %} rel="stylesheet">
+    <link href={% static "admin/css/forms.css" %} rel="stylesheet">
+	<style type="text/css">
+        .submit-row p.deletelink-p-jude {
+            float: left;
+            margin: 0; 
+        }
+        
+        .submit-row a.deletelink-jude {
+            display: block;
+            background: #ba2121;
+            border-radius: 4px;
+            padding: 10px 15px;
+            height: 15px;
+            line-height: 15px;
+            color: #fff;
+        }
+        
+        .submit-row a.deletelink:focus,
+        .submit-row a.deletelink:hover,
+        .submit-row a.deletelink:active {
+            background: #a41515;
+        }
+	</style>
+{% endblock %}
+
+{% block body_block %}
+    {% if user.is_authenticated %}
+        <h2 class="form-signin-heading">Add a feature to <a href="{% url 'project'  project.slug %}"> {{ project.name }}</a></h2>
+
+    <div id="content" class="colM">
+        
+    <h1>Change {{ feature.name }} detail</h1>
+    <div id="content-main">
+    <ul class="object-tools">
+        <li>
+            <a href="/admin/planner/featuredetail/133/history/" class="historylink">History</a>
+        </li>
+    </ul>         
+    <form id="feature_form" method="post" action="{% url 'feature' project.name feature.pk %}">
+        {% if project %}
+            {% csrf_token %}
+            {% for hidden in form.hidden_fields %}
+                {{ hidden }}
+            {% endfor %}
+            <div>
+                <fieldset class="module aligned">
+                    {% for field in form.visible_fields %}
+                    <div class="form-row field-{{ field.name }}">
+                        <div>
+                            {{ field.errors }}
+                            {{ field.label_tag}}
+                            {{ field }}                    
+                        </div>
+                    </div>
+                    {% endfor %}
+                </fieldset>
+                {% submit_row %}
+                <!--
+                <div class="submit-row">
+                    <input value="Save" class="default" name="_save" type="submit">
+                    <p class="deletelink-box"><a href="/admin/planner/featuredetail/137/delete/" class="deletelink">Delete</a></p>
+                    <input value="Add" name="_addanother" type="submit">
+                    <input value="Edit" name="_continue" type="submit">
+                </div>
+                -->
+            </div>
+            <!--<button class="btn btn-primary" type="submit" name="submit">Add Feature</button> -->
+        {% else %}
+        <strong>A project by this name "{{project}}" does not exist.</strong>
+        {% endif %}
+    </form>
+    <script type="text/javascript"
+            id="django-admin-form-add-constants"
+            src={% static 'admin/js/change_form.js' %}
+    </script>    
+    </div>
+    {% else %}
+    <strong> User is not registered!</strong>
+    {% endif %}            
+    </div>
+{% endblock %}

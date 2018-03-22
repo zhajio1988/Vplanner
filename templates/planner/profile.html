@@ -1,0 +1,21 @@
+{% extends "planner/base.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block body_block %}
+<div class="hero-unit">
+   	<h1> Profile <h1> 
+    <br/>
+    <h4><h4>
+	<p>Name: {{ user.username }}</p>
+    <p>Email: {{ user.email }}</p>
+    
+    {% if userprofile %}
+	<p>Website: <a href="{{ userprofile.website }}">{{userprofile.website}}</a></p>
+        <br/>
+    {% if userprofile.picture %}
+	<p>Picture: <img src="{{ userprofile.picture.url }}"  /> </p>
+	{% endif %}
+	{% endif %}
+</div>
+{% endblock %}

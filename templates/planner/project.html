@@ -1,0 +1,83 @@
+{% extends 'planner/base.html' %}
+
+{% block title %}{{ project_name }}{% endblock %}
+
+{% block body_block %}
+    <div class="page-header">
+
+        <b id="like_count">{{ project.likes }}</b> people like this project.
+        {% if user.is_authenticated %}
+		    <button id ="likes" data-catid="{{project.id}}" class="btn btn-primary" type="button"><span class="glyphicon glyphicon-thumbs-up"></span> Like</button>
+	    {% endif %}
+    </div>
+
+<div class="panel panel-primary">
+            <br/>
+
+    {% if project %}
+
+        <div id="features">
+            {% if features %}
+                <ul>
+                    {% for feature in features %}
+                        <li>
+                            <a href="{% url 'feature'  project_name=project.name feature_pk=feature.pk %}">{{ feature.name }}</a>
+                            {% if feature.views > 1 %}
+                                - ({{ feature.views }} views)
+                            {% elif feature.views == 1 %}
+                                - ({{ feature.views }} view)
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+            <p class="text-center"><strong>No feature currently in this project.</strong> <p/>
+            {% endif %}
+         </div>
+
+        {% if user.is_authenticated %}
+            <a href="{% url 'add_page'  project.slug %}">Add a Feature</a>
+            <br/>
+            <a href="{% url 'review'  project.slug %}">Review</a>
+        {% endif %}
+
+    {% else %}
+        The specified project {{ project_name }} does not exist!
+    {% endif %}
+
+    {% if user.is_authenticated %}
+
+            <br/>
+            <form class="form-inline" id="user_form" method="post" action="{% url 'project'  project.slug %}">
+                {% csrf_token %}
+                <!-- Display the search form elements here -->
+                <input class="form-control" type="text" size="50" name="query" value="{{query}}" id="query" />
+                <input class="btn btn-primary" type="submit" name="submit" value="Search" />
+                <br />
+            </form>
+
+            <div class="panel">
+                {% if result_list %}
+                    <div class="panel-heading">
+                    <h3 class="panel-title">Results</h3>
+                    <!-- Display search results in an ordered list -->
+                    <div class="panel-body">
+                        <div class="list-group">
+                            {% for result in result_list %}
+                                <div class="list-group-item">
+                                    <h4 class="list-group-item-heading">
+                                        <a href="{{ result.link }}">{{ result.title }}</a> 
+                                        <button data-catid="{{project.id}}" data-title="{{ result.title }}" data-url="{{ result.link }}" class="planner-add btn btn-mini btn-info" type="button">Add</button> 
+                                    </h4>
+                                    <p class="list-group-item-text">{{ result.summary }}</p>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+                </div>
+            </div>
+
+    {%  endif %}
+     </div>
+{% endblock %}

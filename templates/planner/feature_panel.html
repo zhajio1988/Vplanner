@@ -1,0 +1,115 @@
+{% extends 'planner/review.html' %}
+{% load staticfiles %}
+{% load static %}
+
+{% block feature_panel %} 
+<form action="" method="post" class="bootstrap-frm">
+    <h1>Feature Panel
+    <span>Please fill all the fields.</span>
+    </h1>
+    <label>
+    <span>Simulation Requirements:</span>
+    <textarea id="sim_req" name="description" placeholder="sim req"></textarea>
+    </label>
+    
+    <label>
+    <span>Sequence Requirements:</span>
+    <textarea id="seq_req" name="description" placeholder="seq req"></textarea>
+    </label>
+    
+    <label>
+    <span>Checking Description:</span>
+    <textarea id="check_desp" name="description" placeholder="check desp"></textarea>
+    </label>
+    
+    <label>
+    <span>Func Cov Requirements:</span>
+    <textarea id="func_cov_req" name="description" placeholder="func cov req"></textarea>
+    </label>
+    
+    <label>
+    <span>Priority :</span><select name="selection">
+    <option value="P1">P1</option>
+    <option value="P2">P2</option>
+    <option value="P3">P3</option>
+    </select>
+    </label>
+    
+    <label>
+    <span>Measure {{ project.name  | capfirst }} Source:</span>
+    <textarea id="measure_src" name="description" placeholder="measure src"></textarea>
+    </label>
+    
+    <h2>Back Annotation
+    <span class="text-success">Color green yellow red</span>
+    </h2>
+    
+    <div class="progress progress-striped">
+        <div class="progress-bar progress-bar-success" role="progressbar"
+             aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"
+             style="width: 90%;">
+            <span>testcase: 90%</span>
+        </div>
+    </div>
+    
+    <div class="progress progress-striped">
+        <div class="progress-bar progress-bar-info" role="progressbar"
+             aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+             style="width: 30%;">
+            <span>Line: 30%</span>
+        </div>
+    </div>
+    <div class="progress progress-striped">
+        <div class="progress-bar progress-bar-warning" role="progressbar"
+             aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+             style="width: 20%;">
+            <span>Conditional: 20%</span>
+        </div>
+    </div>
+    
+    <div class="progress progress-striped">
+        <div class="progress-bar progress-bar-danger" role="progressbar"
+             aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+             style="width: 10%;">
+            <span>Toggle: 10%</span>
+        </div>
+    </div>
+    
+    <div class="progress progress-striped">
+        <div class="progress-bar progress-bar-danger" role="progressbar"
+             aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+             style="width: 10%;">
+            <span>FSM: 10%</span>
+        </div>
+    </div>            
+    
+    <div class="progress progress-striped">
+        <div class="progress-bar progress-bar-danger" role="progressbar"
+             aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+             style="width: 10%;">
+            <span>Branch: 10%</span>
+        </div>
+    </div>                
+    
+    <div class="progress progress-striped">
+        <div class="progress-bar progress-bar-danger" role="progressbar"
+             aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+             style="width: 10%;">
+            <span>Assertion: 10%</span>
+        </div>
+    </div> 
+    
+    <div class="progress progress-striped">
+        <div class="progress-bar progress-bar-danger" role="progressbar"
+             aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+             style="width: 10%;">
+            <span>Functional: 10%</span>
+        </div>
+    </div> 
+    
+    <label>
+    <span>&nbsp;</span>
+    <input type="button" class="btn btn-primary" value="Send" />
+    </label>
+</form> 
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'planner/base.html' %}
+
+{% block body_block %}
+
+    {% if user.is_authenticated %}
+    <h1>Add a Project</h1>
+    <form id="project_form" method="post" action="/planner/add_project/">
+
+        {% csrf_token %}
+        {% for hidden in form.hidden_fields %}
+            {{ hidden }}
+        {% endfor %}
+
+        {% for field in form.visible_fields %}
+            {{ field.errors }}
+            {{ field.label}}
+            {{ field.label_tag}}
+            {{ field }}
+        {% endfor %}
+        <br>
+        <button class="btn btn-primary" type="submit" name="submit">Create Project</button>
+    {% else %}
+    <strong> User is not registered!</strong>
+    {% endif %}
+    </form>
+{% endblock %}

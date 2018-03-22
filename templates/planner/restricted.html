@@ -1,0 +1,7 @@
+{% extends 'planner/base.html' %}
+
+{% block body_block %}
+    {% if user.is_authenticated %}
+        <h1>Hello {{ user.username }}, Since you're logged in, you can see this text!</h1>
+    {% endif %}
+{% endblock %}
