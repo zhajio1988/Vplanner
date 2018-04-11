@@ -5,7 +5,7 @@
     {% if user.is_authenticated %}
 
     <form id="page_form" method="post" action="{% url 'add_page'  project.slug %}">
-        <h2 class="form-signin-heading">Add a Page to <a href="{% url 'project'  project.slug %}"> {{ project.name }}</a></h2>
+        <h2 class="form-signin-heading">Add a Feature to <a href="{% url 'project'  project.slug %}"> {{ project.name }}</a></h2>
         {% if project %}
             {% csrf_token %}
             {% for hidden in form.hidden_fields %}
@@ -21,7 +21,7 @@
                 </li>
             {% endfor %}
             </ul>
-            <button class="btn btn-primary" type="submit" name="submit">Add Page</button>
+            <button class="btn btn-primary" type="submit" name="submit">Add Feature</button>
         {% else %}
         <strong>A project by this name "{{project}}" does not exist.</strong>
         {% endif %}

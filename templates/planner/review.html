@@ -10,33 +10,46 @@
     <script src={% static "zTree/js/jquery.ztree.exedit.js" %} type="text/javascript"></script>    
 	<script type="text/javascript">
         var zTree, rMenu;
-		var setting = {
-			view: {
-				addHoverDom: addHoverDom,
-				removeHoverDom: removeHoverDom,
+        var setting = {
+            view: {
+                addHoverDom: addHoverDom,
+                removeHoverDom: removeHoverDom,
                 dblClickExpand: false,
-				selectedMulti: false
-			},
-			edit: {
-				enable: true,
-				editNameSelectAll: true,
-				showRemoveBtn: showRemoveBtn,
-				showRenameBtn: true
-			},
-			data: {
-				simpleData: {
-					enable: true
-				}
-			},
-			callback: {
-				beforeDrag: beforeDrag,
-				beforeEditName: beforeEditName,
-				beforeRemove: beforeRemove,
-				beforeRename: beforeRename,
-                onRightClick: OnRightClick,    
-				onDblClick: onDblClick
-			}
-		};
+                selectedMulti: false
+            },
+            edit: {
+                enable: true,
+                editNameSelectAll: true,
+                showRemoveBtn: showRemoveBtn,
+                showRenameBtn: true
+            },
+            async : {
+                enable : true,
+                url : '/planner/tree_nodes/',
+                //contentType: "application/json",
+                type: "get",
+                otherParam: {"project_name" : "{{project.name}}"},
+            },
+            data: {
+                simpleData: {
+                    enable: true
+                }
+            },
+            callback: {
+            beforeDrag: beforeDrag,
+            beforeEditName: beforeEditName,
+            beforeRemove: beforeRemove,
+            beforeRename: beforeRename,
+            onRightClick: OnRightClick,    
+            onDblClick: onDblClick,
+            onAsyncError:function(event, treeId, treeNode){    
+                //alert("async error");  
+            },
+            onAsyncSuccess:function(event, treeId, treeNode, msg){    
+                //alert("async pass");
+            }
+            }
+        };
 
         function onDblClick(event, treeId, treeNode) {
             //alert(treeNode.tId + ", " + treeNode.name);  
@@ -207,82 +220,10 @@
 			hideRMenu();
 			$.fn.zTree.init($("#treeDemo"), setting, zNodes);
 		}
-// work ok from zTree demo
-
-var zNodes = [
-  {
-    "id": 21,
-    "name": "ddrproj",
-    "pID": 0,
-    "open": true
-  },
-  {
-    "open": true,
-    "name": "feature1",
-    "id": 170,
-    "pId": 21
-  },
-  {
-    "id": 171,
-    "name": "sub1 clk and rst",
-    "pId": 170
-  },
-  {
-    "id": 172,
-    "name": "sub1 rst",
-    "pId": 170
-  },
-  {
-    "id": 173,
-    "name": "sub1 clk",
-    "pId": 170
-  },
-  {
-    "open": true,
-    "name": "feature2",
-    "id": 174,
-    "pId": 21
-  },
-  {
-    "id": 175,
-    "name": "sub2 clk and rst",
-    "pId": 174
-  },
-  {
-    "id": 176,
-    "name": "sub2 rst",
-    "pId": 174
-  },
-  {
-    "id": 177,
-    "name": "sub2 clk",
-    "pId": 174
-  },
-  {
-    "open": true,
-    "name": "feature3",
-    "id": 178,
-    "pId": 21
-  },
-  {
-    "id": 179,
-    "name": "sub3 clk and rst",
-    "pId": 178
-  },
-  {
-    "id": 180,
-    "name": "sub3 rst",
-    "pId": 178
-  },
-  {
-    "id": 181,
-    "name": "sub3 clk",
-    "pId": 178
-  }
-]
 
         $(document).ready(function(){  
-            $.fn.zTree.init($("#treeDemo"), setting, zNodes);  
+            //$.fn.zTree.init($("#treeDemo"), setting, zNodes);  
+            $.fn.zTree.init($("#treeDemo"), setting);
 		    $("#selectAll").bind("click", selectAll);                
 		    zTree = $.fn.zTree.getZTreeObj("treeDemo");                
 		    rMenu = $("#rMenu");
@@ -330,7 +271,7 @@ var zNodes = [
 
 {% block body_block %}
     {% if user.is_authenticated %}
-        <h2 class="form-signin-heading">Review of <a href="{% url 'project'  project.slug %}"> {{ project.name }}</a></h2>
+        <h2 class="form-signin-heading">Review of <a id="project_name" href="{% url 'project'  project.slug %}"> {{ project.name }}</a></h2>
         {% if project %}
             {% csrf_token %}
             <li><a href={% static "json/project.json" %}>Review Json</a></li>

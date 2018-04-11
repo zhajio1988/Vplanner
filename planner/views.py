@@ -126,31 +126,30 @@ def feature(request, project_name, feature_pk):
 
     return render(request, 'planner/feature.html', context_dict)
 
-def add_page(request, category_name_slug):
-
+def add_page(request, project_name_slug):
     try:
-        cat = Category.objects.get(slug=category_name_slug)
-    except Category.DoesNotExist:
-                cat = None
+        cat = Project.objects.get(slug=project_name_slug)
+    except Project.DoesNotExist:
+        cat = None
 
     if request.method == 'POST':
-        form = PageForm(request.POST)
+        form = FeatureForm(request.POST)
         if form.is_valid():
             if cat:
                 page = form.save(commit=False)
-                page.category = cat
+                page.project = cat
                 page.views = 0
                 page.save()
                 # probably better to use a redirect here.
-                redirect_url = reverse('category', args=[category_name_slug])
+                redirect_url = reverse('project', args=[project_name_slug])
                 return HttpResponseRedirect(redirect_url)
                 #return category(request, category_name_slug)
         else:
             print ('debug point0', form.errors)
     else:
-        form = PageForm()
+        form = FeatureForm()
 
-    context_dict = {'form':form, 'category': cat}
+    context_dict = {'form':form, 'project': cat}
 
     return render(request, 'planner/add_page.html', context_dict)
 
@@ -388,7 +387,7 @@ def auto_add_page(request):
 
 @login_required
 def review(request, project_name):
-    ModelToJson(project_name)
+    #ModelToJson(project_name)
     try:
         project = Project.objects.get(slug=project_name)
     except Project.DoesNotExist:
@@ -398,26 +397,31 @@ def review(request, project_name):
 
     return render(request, 'planner/review.html', context_dict)
 
-#@login_required
-#def get_tree_node_content(request):
-#    context_dict = {}
-#    context_dict['result_list'] = None    
-#    result_list = []
-#    
-#    if request.method == 'GET':
-#        cat_name = request.GET['category_name']
-#        if cat_name:
-#            category = Category.objects.get(slug=cat_name)
-#            pages = Page.objects.filter(category=category)
-#
-#            for page in pages:
-#                result_list.append({
-#                'title': page.title,
-#                'link': page.url
-#                })                
-#            context_dict['result_list'] = result_list
-#                
-#    return render(request, 'planner/ztree_node_content.html', context_dict)
+@login_required
+def getzTreeNodes(request):
+    if request.method == 'GET':
+        project_name = request.GET['project_name']
+        return HttpResponse(zTreeContent(project_name), content_type='application/json')
+
+def zTreeContent(project_name_slug):
+    json_data=[]
+    result = {}
+    project = Project.objects.get(slug=project_name_slug)
+    result["id"] = project.id 
+    result["pID"] = project.pid 
+    result["name"] = project.name
+    result["open"] = True
+    json_data.append(result)
+
+    for feature in Feature.objects.filter(project=project):
+        result = {}
+        if (len(feature.child_set.all())) > 0:
+            result["open"] = True
+        result["id"] = feature.id 
+        result["pId"] = feature.pid 
+        result["name"] = feature.name.split(".")[-1]
+        json_data.append(result)
+    return json.dumps(json_data, indent=2)
 
 @login_required
 def get_tree_node_content(request):

@@ -68,7 +68,7 @@ class ProjectForm(forms.ModelForm):
         fields = ('name', 'likes')
 
 class FeatureForm(forms.ModelForm):
-    name = forms.CharField(max_length=128, label="Feature Name")
+    name = forms.CharField(max_length=128, label="Feature Name", help_text="Please enter Feature Name.")
     views = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
 
     class Meta:
@@ -76,7 +76,7 @@ class FeatureForm(forms.ModelForm):
 
         exclude = ("project", "pid")
         #or specify the fields to include (i.e. not include the category field)
-        #fields = ('title', 'url', 'views')        
+        fields = ('name', 'views')        
 
 class FeatureDetailForm(forms.ModelForm):
     priority = forms.ChoiceField(choices=FeatureDetail.priority_choices, label="Priority")  

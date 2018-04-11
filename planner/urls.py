@@ -8,7 +8,8 @@ urlpatterns = [
         url(r'^project/(?P<project_name_slug>[\w\-]+)/$', views.project, name='project'),
         url(r'^add_project/$', views.add_project, name='add_project'), 
         url(r'^project/(?P<project_name>[\w\-]+)/(?P<feature_pk>\d+)/$', views.feature, name='feature'),
-        url(r'^category/(?P<category_name_slug>[\w\-]+)/add_page/$', views.add_page, name='add_page'),
+        #url(r'^category/(?P<category_name_slug>[\w\-]+)/add_page/$', views.add_page, name='add_page'),
+        url(r'^project/(?P<project_name_slug>[\w\-]+)/add_page/$', views.add_page, name='add_page'),
         url(r'^register/$', views.register, name='register'),
         url(r'^login/$', views.user_login, name='login'),
         url(r'^restricted/', views.restricted, name='restricted'),
@@ -20,4 +21,5 @@ urlpatterns = [
         url(r'^auto_add_page/$', views.auto_add_page, name='auto_add_page'),
         url(r'^project/(?P<project_name>[\w\-]+)/review/$', views.review, name='review'),        
         url(r'^tree_node_content/$', views.get_tree_node_content, name='tree_node_content'),        
+        url(r'^tree_nodes/$', views.getzTreeNodes, name='tree_nodes'),        
         ]
